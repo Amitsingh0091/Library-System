@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Library Login</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(120deg,#2980b9,#8e44ad);
+}
+.container{
+    background:#fff;
+    padding:25px;
+    width:320px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.3);
+}
+h2{
+    text-align:center;
+    font-family: Segoe Print;
+}
+input{
+    width:100%;
+    padding:8px;
+    margin:6px 0;
+}
+button{
+    width:100%;
+    padding:8px;
+    background:#007bff;
+    color:white;
+    border:none;
+    cursor:pointer;
+    font-family: Segoe Print;
+}
+.links{
+    text-align:center;
+    margin-top:10px;
+    display: inline-block;
+    display: flex;
+}
+.links a{
+    cursor:pointer;
+    color:#007bff;
+    padding: 19px;
+    font-size: 12px;
+
+}
+.hide{
+    display:none;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- LOGIN -->
+<div id="loginBox">
+<h2>Login</h2>
+<input id="loginUser" placeholder="Username 🦸" required>
+<input id="loginPass" type="password" placeholder="Password🔒" required>
+<div class="links">
+<a onclick="showRegister()">New User? Register</a>
+<a onclick="showForgot()">Forgot Password?</a>
+</div>
+<button onclick="login()">Login</button>
+
+
+</div>
+
+<!-- REGISTER -->
+<div id="registerBox" class="hide">
+<h2>Register</h2>
+<input id="regUser" placeholder="Username">
+<input id="regPass" type="password" placeholder="Password">
+<input id="regConfirm" type="password" placeholder="Confirm Password">
+<button onclick="register()">Register</button>
+<div class="links">
+<a onclick="showLogin()">Back to Login</a>
+</div>
+</div>
+
+<!-- FORGOT -->
+<div id="forgotBox" class="hide">
+<h2>Forgot Password</h2>
+<input id="forgotUser" placeholder="Username">
+<input id="newPass" type="password" placeholder="New Password">
+<button onclick="resetPassword()">Reset Password</button>
+<div class="links">
+<a onclick="showLogin()">Back to Login</a>
+</div>
+</div>
+
+</div>
+
+<script>
+// ============== USERS PASSWORDS) =================
+let defaultUsers = [
+    {username:"amit",    password:"amit@123"},
+    {username:"ashwani", password:"ashwani@456"},
+    {username:"atul",    password:"atul@789"}
+];
+
+if(!localStorage.getItem("users")){
+    localStorage.setItem("users", JSON.stringify(defaultUsers));
+}
+
+
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+// ================= UI SWITCH =================
+function showRegister(){
+    loginBox.classList.add("hide");
+    registerBox.classList.remove("hide");
+    forgotBox.classList.add("hide");
+}
+function showLogin(){
+    loginBox.classList.remove("hide");
+    registerBox.classList.add("hide");
+    forgotBox.classList.add("hide");
+}
+function showForgot(){
+    loginBox.classList.add("hide");
+    registerBox.classList.add("hide");
+    forgotBox.classList.remove("hide");
+}
+
+// ================= REGISTER =================
+function register(){
+    let u = regUser.value.trim().toLowerCase();
+    let p = regPass.value;
+    let c = regConfirm.value;
+
+    if(u=="" || p=="" || c==""){
+        alert("All fields required");
+        return;
+    }
+    if(p !== c){
+        alert("Password not match");
+        return;
+    }
+
+    let exist = users.find(x => x.username === u);
+    if(exist){
+        alert("Username already exists");
+        return;
+    }
+
+    users.push({username:u, password:p});
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("Registration successful!");
+    showLogin();
+}
+
+// ================= LOGIN =================
+function login(){
+    let u = loginUser.value.trim().toLowerCase();
+    let p = loginPass.value;
+
+    let found = users.find(x => x.username === u && x.password === p);
+
+    if(found){
+        localStorage.setItem("isLoggedIn","true");
+        localStorage.setItem("loggedUser", u);
+       // alert("Login Successful!");
+        window.location.href = "AAlibrary26.html";   // 👉 अपनी main library file का नाम यहाँ डालो
+    }else{
+        alert("Wrong Username or Password");
+    }
+}
+
+// ================= FORGOT PASSWORD =================
+function resetPassword(){
+    let u = forgotUser.value.trim().toLowerCase();
+    let newP = newPass.value;
+
+    let user = users.find(x => x.username === u);
+    if(!user){
+        alert("User not found");
+        return;
+    }
+
+    user.password = newP;
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("Password changed!");
+    showLogin();
+}
+</script>
+
+</body>
+</html>
